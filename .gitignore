@@ -1,4 +1,17 @@
-# Gradle and build outputs
+# Gradle
 .gradle/
 build/
+gradle/config.properties
+
+# Android Studio
+.idea/
+*.iml
+local.properties
+
+# Build outputs
 app/build/
+app/release/
+
+# Misc
+*.log
+.DS_Store
