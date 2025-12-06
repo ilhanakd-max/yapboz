@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Puzzle Oyunu</string>
+    <string name="select_language">Dil Seçin</string>
+    <string name="turkish">🇹🇷 Türkçe</string>
+    <string name="english">🇬🇧 English</string>
+    <string name="upload_image">📷 Yükle</string>
+    <string name="shuffle">🔀 Karıştır</string>
+    <string name="hint">💡 İpucu</string>
+    <string name="easy">😊 Kolay&#10;2×2</string>
+    <string name="medium">🙂 Orta&#10;3×3</string>
+    <string name="hard">😎 Zor&#10;4×4</string>
+    <string name="time_label">⏱️ Süre</string>
+    <string name="moves_label">🔄 Hamle</string>
+    <string name="correct_label">✅ Doğru</string>
+    <string name="target_image">🎯 Hedef</string>
+    <string name="congratulations">🎉 TEBRİKLER! 🎉</string>
+    <string name="puzzle_complete">Puzzle'ı tamamladın!</string>
+    <string name="time_result">⏱️ Süre: %1$s</string>
+    <string name="moves_result">🔄 Hamle: %1$d</string>
+    <string name="play_again">🔄 Tekrar Oyna</string>
+    <string name="close">Kapat</string>
+    <string name="upload_first">Önce resim yükle! 📷</string>
+    <string name="tap_to_swap">Parçalara dokun! 🧩</string>
+    <string name="sound_on">🔊</string>
+    <string name="sound_off">🔇</string>
+    <string name="change_language">🌐</string>
+    <string name="default_time">00:00</string>
+    <string name="zero">0</string>
+    <string name="percent_format">%d%%</string>
+    <string name="puzzle_logo">🧩</string>
+    <string name="puzzle_title">🧩 Puzzle 🎨</string>
+    <string name="progress_zero">0%</string>
+    <string name="celebration_stars">⭐🌟⭐</string>
+</resources>
