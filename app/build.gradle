@@ -2,6 +2,39 @@ plugins {
     id 'com.android.application'
 }
 
+abstract class GenerateLauncherIcons extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getIconBase64()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @TaskAction
+    void generate() {
+        def iconData = iconBase64.get().asFile.text.trim()
+        if (!iconData) {
+            throw new GradleException("icon_base64.txt boş; uygulama simgesi üretilemedi.")
+        }
+
+        def decoder = java.util.Base64.decoder
+        def outRoot = outputDir.get().asFile
+
+        [
+                "mipmap-mdpi",
+                "mipmap-hdpi",
+                "mipmap-xhdpi",
+                "mipmap-xxhdpi",
+                "mipmap-xxxhdpi",
+                "mipmap-anydpi-v26"
+        ].each { folder ->
+            def dir = new File(outRoot, folder)
+            dir.mkdirs()
+            def iconFile = new File(dir, "icon.png")
+            iconFile.bytes = decoder.decode(iconData)
+        }
+    }
+}
+
 android {
     namespace 'com.puzzlegame.app'
     compileSdk 34
@@ -28,46 +61,21 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    sourceSets {
-        main {
-            res.srcDirs += "$buildDir/generated/res"
-        }
-    }
 }
 
 def iconBase64File = file("$projectDir/icon_base64.txt")
-def generatedResDir = file("$buildDir/generated/res")
 
-tasks.register("generateLauncherIcons") {
-    inputs.file(iconBase64File)
-    outputs.dir(generatedResDir)
-
-    doLast {
-        if (!iconBase64File.exists()) {
-            throw new GradleException("icon_base64.txt bulunamadı; uygulama simgesini üretmek için gereklidir.")
-        }
-
-        def iconData = iconBase64File.text.trim()
-        def decoder = java.util.Base64.decoder
-
-        [
-                "mipmap-mdpi",
-                "mipmap-hdpi",
-                "mipmap-xhdpi",
-                "mipmap-xxhdpi",
-                "mipmap-xxxhdpi",
-                "mipmap-anydpi-v26"
-        ].each { folder ->
-            def dir = new File(generatedResDir, folder)
-            dir.mkdirs()
-            def iconFile = new File(dir, "icon.png")
-            iconFile.bytes = decoder.decode(iconData)
-        }
-    }
+def generateLauncherIcons = tasks.register("generateLauncherIcons", GenerateLauncherIcons) {
+    iconBase64.set(iconBase64File)
+    outputDir.set(layout.buildDirectory.dir("generated/res/main"))
 }
 
-tasks.named("preBuild") {
-    dependsOn("generateLauncherIcons")
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.res?.addGeneratedSourceDirectory(generateLauncherIcons) { task ->
+            task.outputDir
+        }
+    }
 }
 
 dependencies {
