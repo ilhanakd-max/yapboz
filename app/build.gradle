@@ -5,6 +5,7 @@ plugins {
 android {
     namespace 'com.puzzlegame.app'
     compileSdk 34
+    buildToolsVersion "34.0.0"
 
     defaultConfig {
         applicationId "com.puzzlegame.app"
@@ -29,7 +30,7 @@ android {
 
     sourceSets {
         main {
-            res.srcDir "$buildDir/generated/res"
+            res.srcDirs += "$buildDir/generated/res"
         }
     }
 }
