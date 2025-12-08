@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yapboz Arena</title>
+  <style>
+    :root {
+      --bg-start: #0f172a;
+      --bg-end: #1f4b99;
+      --card: #0b1224;
+      --accent: #7c3aed;
+      --accent-2: #22d3ee;
+      --text: #e2e8f0;
+      --muted: #a5b4fc;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.12), transparent 35%),
+                  radial-gradient(circle at 80% 10%, rgba(124, 58, 237, 0.2), transparent 40%),
+                  linear-gradient(140deg, var(--bg-start), var(--bg-end));
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .wrapper {
+      width: min(960px, 100%);
+      background: rgba(11, 18, 36, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+      border-radius: 22px;
+      padding: 20px;
+      backdrop-filter: blur(8px);
+      display: grid;
+      gap: 18px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .title span.icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 28px rgba(34, 211, 238, 0.35);
+      font-size: 26px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 28px);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--muted);
+      min-width: 110px;
+      justify-content: center;
+    }
+
+    .pill strong { color: var(--text); }
+
+    button.action {
+      background: linear-gradient(135deg, #10b981, #22d3ee);
+      color: #041226;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      box-shadow: 0 16px 32px rgba(16, 185, 129, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button.action.secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: none;
+    }
+
+    button.action:active { transform: translateY(1px); }
+
+    .board {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(34, 211, 238, 0.3));
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      height: 82px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+    }
+
+    .card.revealed {
+      transform: rotateY(0deg) scale(1.02);
+      box-shadow: 0 18px 36px rgba(124, 58, 237, 0.35);
+    }
+
+    .card .face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      backface-visibility: hidden;
+      border-radius: 14px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .card .front { color: var(--text); }
+
+    .card .back {
+      transform: rotateY(180deg);
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.35));
+      border: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .card.revealed .front { transform: rotateY(180deg); }
+    .card.revealed .back { transform: rotateY(360deg); }
+    .card.matched { background: linear-gradient(135deg, #10b981, #22d3ee); color: #062028; }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status strong { color: var(--text); }
+
+    .message {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .card { height: 86px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrapper">
+    <header>
+      <div class="title">
+        <span class="icon">🧩</span>
+        <div>
+          <h1>Yapboz Arena</h1>
+          <div class="status">
+            <span>📱 WebView bulmaca deneyimi</span>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="pill">⏱️ <strong id="time">00:00</strong></div>
+        <div class="pill">🔄 <strong id="moves">0</strong> hamle</div>
+        <div class="pill">⭐ En iyi: <strong id="best">—</strong></div>
+        <button class="action" id="newGame">Yeni Oyun</button>
+      </div>
+    </header>
+
+    <section class="board">
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="message" id="message">Eşleşmeleri bulmak için kartlara dokun. İlk dokunuş zamanlayıcıyı başlatır.</section>
+  </main>
+
+  <script>
+    const icons = ["🚀", "🌟", "🎮", "🧠", "🛰️", "🦄", "🍀", "🎲"];
+    const grid = document.getElementById("grid");
+    const timeEl = document.getElementById("time");
+    const movesEl = document.getElementById("moves");
+    const bestEl = document.getElementById("best");
+    const messageEl = document.getElementById("message");
+    const newGameBtn = document.getElementById("newGame");
+
+    let revealed = [];
+    let matched = 0;
+    let moves = 0;
+    let startTime = null;
+    let timerId = null;
+    let bestTime = localStorage.getItem("yapboz_best");
+
+    const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
+
+    const formatTime = (ms) => {
+      const total = Math.floor(ms / 1000);
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      return `${pad(m)}:${pad(s)}`;
+    };
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function updateTimer() {
+      if (!startTime) return;
+      const elapsed = Date.now() - startTime;
+      timeEl.textContent = formatTime(elapsed);
+    }
+
+    function stopTimer() {
+      clearInterval(timerId);
+      timerId = null;
+    }
+
+    function startTimer() {
+      if (timerId || startTime) return;
+      startTime = Date.now();
+      timerId = setInterval(updateTimer, 300);
+    }
+
+    function setMessage(text) {
+      messageEl.textContent = text;
+    }
+
+    function resetBoard() {
+      grid.innerHTML = "";
+      matched = 0;
+      moves = 0;
+      movesEl.textContent = moves;
+      startTime = null;
+      stopTimer();
+      timeEl.textContent = "00:00";
+      revealed = [];
+      if (bestTime) bestEl.textContent = formatTime(Number(bestTime));
+      else bestEl.textContent = "—";
+
+      const tiles = shuffle([...icons, ...icons]);
+      tiles.forEach((icon, index) => {
+        const card = document.createElement("button");
+        card.className = "card";
+        card.dataset.icon = icon;
+        card.dataset.index = index;
+        card.innerHTML = `
+          <div class="face front">${icon}</div>
+          <div class="face back">?</div>
+        `;
+        card.addEventListener("click", () => onCardClick(card));
+        grid.appendChild(card);
+      });
+
+      setMessage("Eşleşmeleri bulmak için kartlara dokun. İlk dokunuş zamanlayıcıyı başlatır.");
+    }
+
+    function lockCards() {
+      grid.classList.add("locked");
+    }
+
+    function unlockCards() {
+      grid.classList.remove("locked");
+    }
+
+    function onCardClick(card) {
+      if (grid.classList.contains("locked")) return;
+      if (card.classList.contains("revealed")) return;
+
+      startTimer();
+      card.classList.add("revealed");
+      revealed.push(card);
+
+      if (revealed.length === 2) {
+        moves += 1;
+        movesEl.textContent = moves;
+        const [first, second] = revealed;
+        if (first.dataset.icon === second.dataset.icon) {
+          revealed = [];
+          matched += 2;
+          first.classList.add("matched");
+          second.classList.add("matched");
+          if (matched === icons.length * 2) {
+            stopTimer();
+            const elapsed = Date.now() - startTime;
+            if (!bestTime || elapsed < bestTime) {
+              bestTime = elapsed;
+              localStorage.setItem("yapboz_best", elapsed.toString());
+              bestEl.textContent = formatTime(elapsed);
+              setMessage(`Yeni rekor! ${formatTime(elapsed)} sürede bitirdin 🎉`);
+            } else {
+              setMessage(`Mükemmel! ${formatTime(elapsed)} sürede bitirdin 🏁`);
+            }
+          }
+        } else {
+          lockCards();
+          setTimeout(() => {
+            first.classList.remove("revealed");
+            second.classList.remove("revealed");
+            revealed = [];
+            unlockCards();
+          }, 750);
+        }
+      }
+    }
+
+    newGameBtn.addEventListener("click", resetBoard);
+    resetBoard();
+  </script>
+</body>
+</html>
